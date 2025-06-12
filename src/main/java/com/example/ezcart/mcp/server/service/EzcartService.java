@@ -53,16 +53,22 @@ public class EzcartService {
         - minPrice: (Optional) Minimum price filter (e.g., 500.0)
         - maxPrice: (Optional) Maximum price filter (e.g., 1000.0)
         - manufacturer: (Optional) Filter by manufacturer name (e.g., 'Samsung', 'Dell')
+        - ramFilters: (Optional) List of RAM specifications to filter by (e.g., ['8GB', '16GB'])
+        - processorFilters: (Optional) List of processor types to filter by (e.g., ['i5', 'i7', 'Ryzen 7'])
+        - storageFilters: (Optional) List of storage specifications to filter by (e.g., ['256GB SSD', '512GB SSD'])
         
         Returns: List of products matching the criteria
-        Example: search for laptops under $1000 from Dell
+        Example: search for laptops under $1000 from Dell with 16GB RAM and i7 processor
         """)
     public List<Product> searchProducts(
             String query,
             String category,
             Double minPrice,
             Double maxPrice,
-            String manufacturer) {
+            String manufacturer,
+            List<String> ramFilters,
+            List<String> processorFilters,
+            List<String> storageFilters) {
 
         return restClient.get()
                 .uri(uriBuilder -> {
@@ -72,6 +78,15 @@ public class EzcartService {
                     if (minPrice != null) uriBuilder.queryParam("minPrice", minPrice);
                     if (maxPrice != null) uriBuilder.queryParam("maxPrice", maxPrice);
                     if (manufacturer != null) uriBuilder.queryParam("manufacturer", manufacturer);
+                    if (ramFilters != null && !ramFilters.isEmpty()) {
+                        ramFilters.forEach(ram -> uriBuilder.queryParam("spec.ram", ram));
+                    }
+                    if (processorFilters != null && !processorFilters.isEmpty()) {
+                        processorFilters.forEach(proc -> uriBuilder.queryParam("spec.processor", proc));
+                    }
+                    if (storageFilters != null && !storageFilters.isEmpty()) {
+                        storageFilters.forEach(storage -> uriBuilder.queryParam("spec.storage", storage));
+                    }
                     return uriBuilder.build();
                 })
                 .retrieve()
