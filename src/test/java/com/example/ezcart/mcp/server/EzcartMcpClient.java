@@ -57,7 +57,7 @@ public class EzcartMcpClient {
 //		System.out.println("Products by Category: " + getProductsByCategoryResult);
 //		System.out.println("\n");
 
-		CallToolResult searchProductsResult = client.callTool(new CallToolRequest("searchProducts", Map.of("query", "professional laptop", "category", "LAPTOP", "minPrice", 500.0, "maxPrice", 3000.0, "manufacturer", "" ,"ramFilters", new String[]{"32GB", "16GB"}, "storageFilters", new String[]{"512GB"}, "processorFilters", new String[]{})));
+		CallToolResult searchProductsResult = client.callTool(new CallToolRequest("searchProducts", Map.of("query", "professional laptop", "categories", new String[]{"LAPTOP"}, "minPrice", 500.0, "maxPrice", 3000.0, "manufacturers", new String[]{""} ,"ramFilters", new String[]{"32GB", "16GB"}, "storageFilters", new String[]{"512GB"}, "processorFilters", new String[]{})));
 		System.out.println("Search Results: " + searchProductsResult);
 		System.out.println("\n");
 

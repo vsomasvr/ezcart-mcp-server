@@ -17,11 +17,12 @@ public class EzcartService {
     private final RestClient restClient;
 
     @Autowired
-    public EzcartService(@Value("${ezcart.api.base-url}") String baseUrl) {
+    public EzcartService(@Value("${ezcart.api.base-url}") String baseUrl, @Value("${ezcart.api.auth-header}") String authHeader) {
         this.restClient = RestClient.builder()
                 .baseUrl(baseUrl)
                 .defaultHeader("Accept", "application/json")
                 .defaultHeader("Content-Type", "application/json")
+                .defaultHeader("Authorization", authHeader)
                 .build();
     }
 
@@ -49,10 +50,10 @@ public class EzcartService {
         - query: (Optional) Text to search in product names, descriptions and specifications. 
             This follows AND-logic keyword search. 
             It supports a Maximum of 10 words for search. Please refine your query
-        - category: (Optional) Filter by category (e.g., 'LAPTOP', 'MOBILE', 'TABLET')
+        - categories: (Optional) List of categories to filter by (e.g., ['LAPTOP', 'MOBILE', 'TABLET'])
         - minPrice: (Optional) Minimum price filter (e.g., 500.0)
         - maxPrice: (Optional) Maximum price filter (e.g., 1000.0)
-        - manufacturer: (Optional) Filter by manufacturer name (e.g., 'Samsung', 'Dell')
+        - manufacturers: (Optional) List of manufacturer names to filter by (e.g., ['Samsung', 'Dell'])
         - ramFilters: (Optional) List of RAM specifications to filter by (e.g., ['8GB', '16GB'])
         - processorFilters: (Optional) List of processor types to filter by (e.g., ['i5', 'i7', 'Ryzen 7'])
         - storageFilters: (Optional) List of storage specifications to filter by (e.g., ['256GB SSD', '512GB SSD'])
@@ -62,10 +63,10 @@ public class EzcartService {
         """)
     public List<Product> searchProducts(
             String query,
-            String category,
+            List<String> categories,
             Double minPrice,
             Double maxPrice,
-            String manufacturer,
+            List<String> manufacturers,
             List<String> ramFilters,
             List<String> processorFilters,
             List<String> storageFilters) {
@@ -74,10 +75,14 @@ public class EzcartService {
                 .uri(uriBuilder -> {
                     uriBuilder.path("/api/catalog/search");
                     if (query != null) uriBuilder.queryParam("query", query);
-                    if (category != null) uriBuilder.queryParam("category", category);
+                    if (categories != null && !categories.isEmpty()) {
+                        categories.forEach(category -> uriBuilder.queryParam("category", category));
+                    }
                     if (minPrice != null) uriBuilder.queryParam("minPrice", minPrice);
                     if (maxPrice != null) uriBuilder.queryParam("maxPrice", maxPrice);
-                    if (manufacturer != null) uriBuilder.queryParam("manufacturer", manufacturer);
+                    if (manufacturers != null && !manufacturers.isEmpty()) {
+                        manufacturers.forEach(manufacturer -> uriBuilder.queryParam("manufacturer", manufacturer));
+                    }
                     if (ramFilters != null && !ramFilters.isEmpty()) {
                         ramFilters.forEach(ram -> uriBuilder.queryParam("spec.ram", ram));
                     }
