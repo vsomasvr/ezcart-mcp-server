@@ -1,5 +1,6 @@
 package com.example.ezcart.mcp.server.service;
 
+import com.example.ezcart.mcp.server.domain.CartItem;
 import com.example.ezcart.mcp.server.domain.Product;
 import com.example.ezcart.mcp.server.domain.Review;
 import org.springframework.ai.tool.annotation.Tool;
@@ -144,5 +145,47 @@ public class EzcartService {
                 .uri("/api/reviews/user/{userId}", userId)
                 .retrieve()
                 .body(new ParameterizedTypeReference<>() {});
+    }
+
+    @Tool(description = "Get all items from the user's shopping cart.")
+    public List<CartItem> getCart() {
+        return restClient.get()
+                .uri("/api/cart")
+                .retrieve()
+                .body(new ParameterizedTypeReference<>() {});
+    }
+
+    @Tool(description = "Add an item to the shopping cart.")
+    public List<CartItem> addToCart(String productId, int quantity) {
+        CartItem item = new CartItem(productId, quantity);
+        return restClient.post()
+                .uri("/api/cart/items")
+                .body(item)
+                .retrieve()
+                .body(new ParameterizedTypeReference<>() {});
+    }
+
+    @Tool(description = "Update the quantity of an item in the shopping cart.")
+    public List<CartItem> updateCartItem(String productId, int quantity) {
+        return restClient.put()
+                .uri("/api/cart/items/{productId}?quantity={quantity}", productId, quantity)
+                .retrieve()
+                .body(new ParameterizedTypeReference<>() {});
+    }
+
+    @Tool(description = "Remove an item from the shopping cart.")
+    public void removeFromCart(String productId) {
+        restClient.delete()
+                .uri("/api/cart/items/{productId}", productId)
+                .retrieve()
+                .toBodilessEntity();
+    }
+
+    @Tool(description = "Remove all items from the shopping cart.")
+    public void clearCart() {
+        restClient.delete()
+                .uri("/api/cart")
+                .retrieve()
+                .toBodilessEntity();
     }
 }

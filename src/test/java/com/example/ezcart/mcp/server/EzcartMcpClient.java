@@ -72,6 +72,23 @@ public class EzcartMcpClient {
 		CallToolResult getUserReviewsResult = client.callTool(new CallToolRequest("getUserReviews", Map.of("userId", "creativeFlow")));
 		System.out.println("User Reviews: " + getUserReviewsResult);
 
+		System.out.println("\n--- Testing Cart --- ");
+
+		CallToolResult addToCartResult = client.callTool(new CallToolRequest("addToCart", Map.of("productId", "AETHER-CORE-15", "quantity", 1)));
+		System.out.println("Add to cart: " + addToCartResult);
+
+		CallToolResult getCartResult = client.callTool(new CallToolRequest("getCart", Map.of()));
+		System.out.println("Get cart: " + getCartResult);
+
+		CallToolResult updateCartItemResult = client.callTool(new CallToolRequest("updateCartItem", Map.of("productId", "AETHER-CORE-15", "quantity", 2)));
+		System.out.println("Update cart item: " + updateCartItemResult);
+
+		CallToolResult removeFromCartResult = client.callTool(new CallToolRequest("removeFromCart", Map.of("productId", "AETHER-CORE-15")));
+		System.out.println("Remove from cart: " + removeFromCartResult);
+
+		CallToolResult clearCartResult = client.callTool(new CallToolRequest("clearCart", Map.of()));
+		System.out.println("Clear cart: " + clearCartResult);
+
 		client.closeGracefully();
 
 	}
