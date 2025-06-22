@@ -3,6 +3,7 @@ package com.example.ezcart.mcp.server.service;
 import com.example.ezcart.mcp.server.domain.CartItem;
 import com.example.ezcart.mcp.server.domain.Product;
 import com.example.ezcart.mcp.server.domain.Review;
+import com.example.ezcart.mcp.server.security.OAuth2TokenService;
 import org.springframework.ai.chat.model.ToolContext;
 import org.springframework.ai.tool.annotation.Tool;
 import org.springframework.ai.tool.annotation.ToolParam;
@@ -13,19 +14,27 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
 
+import java.util.function.Supplier;
+
 import java.util.List;
 
 @Service
 public class EzcartService {
     private final RestClient restClient;
+    private final OAuth2TokenService tokenService;
 
     @Autowired
-    public EzcartService(@Value("${ezcart.api.base-url}") String baseUrl, @Value("${ezcart.api.auth-header}") String authHeader) {
+    public EzcartService(
+            @Value("${ezcart.api.base-url}") String baseUrl,
+            OAuth2TokenService tokenService) {
+        this.tokenService = tokenService;
         this.restClient = RestClient.builder()
                 .baseUrl(baseUrl)
-                .defaultHeader("Accept", "application/json")
-                .defaultHeader("Content-Type", "application/json")
-                .defaultHeader("Authorization", authHeader)
+                .requestInitializer(request -> {
+                    request.getHeaders().set("Accept", "application/json");
+                    request.getHeaders().set("Content-Type", "application/json");
+                    request.getHeaders().setBearerAuth(tokenService.getAccessToken().replace("Bearer ", ""));
+                })
                 .build();
     }
 
