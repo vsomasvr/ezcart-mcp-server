@@ -22,6 +22,7 @@ import io.modelcontextprotocol.spec.McpSchema.CallToolRequest;
 import io.modelcontextprotocol.spec.McpSchema.CallToolResult;
 import io.modelcontextprotocol.spec.McpSchema.ListToolsResult;
 
+import java.net.http.HttpRequest;
 import java.util.Map;
 
 public class EzcartMcpClient {
@@ -29,7 +30,14 @@ public class EzcartMcpClient {
 	private final McpClientTransport transport;
 
 	public static void main(String[] args) {
-		McpClientTransport clientTransport = HttpClientSseClientTransport.builder("http://localhost:9090").build();
+		// 1. Obtain a bearer token from your OAuth2 provider (e.g., using client credentials grant).
+		// This is a placeholder. Replace with your actual token retrieval logic.
+		String bearerToken = "your-jwt-token-here";
+
+		McpClientTransport clientTransport = HttpClientSseClientTransport.builder("http://localhost:9090/api/v1/mcp")
+				.requestBuilder(HttpRequest.newBuilder()
+						.header("Authorization", "Bearer " + bearerToken).header("Content-Type", "application/json"))
+				.build();
 	    new EzcartMcpClient(clientTransport).run();
 	}
 

@@ -3,7 +3,9 @@ package com.example.ezcart.mcp.server.service;
 import com.example.ezcart.mcp.server.domain.CartItem;
 import com.example.ezcart.mcp.server.domain.Product;
 import com.example.ezcart.mcp.server.domain.Review;
+import org.springframework.ai.chat.model.ToolContext;
 import org.springframework.ai.tool.annotation.Tool;
+import org.springframework.ai.tool.annotation.ToolParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
@@ -108,7 +110,7 @@ public class EzcartService {
         Returns: Complete product details including specifications and availability
         Example: get details for product ID 'prod-123'
         """)
-    public Product getProductById(String productId) {
+    public Product getProductById(@ToolParam String productId, ToolContext toolContext) {
         return restClient.get()
                 .uri("/api/catalog/products/{id}", productId)
                 .retrieve()
